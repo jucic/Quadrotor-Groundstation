@@ -1,0 +1,295 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+using Microsoft.Office.Core;
+
+using quadrotor_groundstation.userclass;
+using quadrotor_groundstation.usercontrol;
+
+namespace quadrotor_groundstation
+{
+    public partial class groundstation : Form
+    {
+        datacheck datacheck1= new datacheck();
+        dataanalysis dataanalysis1 = new dataanalysis();
+
+        static  string fileName = "C:\\Users\\Administrator\\Desktop\\1.csv";   //指定文件保存在 当前项目文件夹中的bin/debug/文件夹中
+        StreamWriter sw = new StreamWriter(fileName, true, Encoding.Default);
+
+        public groundstation()
+        {
+
+            InitializeComponent();
+
+            this.Text = "quadrotor groundstation";
+            this.Icon = Properties.Resources.RMBLOGO;
+            hid1.DataCheckEvent += datacheck1.DataCheck;
+            hid1.DataanalysisEvent += dataanalysis1.DataAnalysis;
+
+            dataanalysis1.statusshowEvent += textboxview1.ShowStatus;
+            dataanalysis1.heightshowEvent += textboxview1.ShowHeight;
+            dataanalysis1.showsensorshowEvent += textboxview1.ShowSensor ;
+            dataanalysis1.showrecvdataEvent += textboxview1.ShowRecevData;
+
+            //dataanalysis1.WaveAllEvent += wave1.AddAllData;
+            dataanalysis1.WaveAllEvent1 += waveerror1.AddstatusData;
+            //dataanalysis1.WaveAllEvent1 += waveerror2.AddstatusData;
+
+            //dataanalysis1.writecsvEvent += writecsv;
+
+            videocapture1.controldatasendEvent += hid1.senddata;
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            //byte[] pitrolbyteData = new byte[65]; //new byte[64];
+            //pitrolbyteData[0] = 0X00; pitrolbyteData[1] = 0X06; pitrolbyteData[2] = 0XAA; pitrolbyteData[3] = 0XAF; pitrolbyteData[4] = 0X01;
+            //pitrolbyteData[5] = 0X01; pitrolbyteData[6] = 0X11; pitrolbyteData[7] = 0X6C;
+            //byte[] Data = new byte[] { 0XAA, 0XAF, 0X01, 0X01, 0X11, 0X6C };//
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0X11, 0X6C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            //  byte[] Data = new byte[] { 0XAA, 0XAF, 0X01, 0X01, 0XFF, 0X5A };//
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFF, 0X5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void groundstation_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if(videocapture1._capture !=null )
+            videocapture1._capture.Dispose();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            dataanalysis1.TargetHeight = 300;
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFE, 0X59, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            //byte[] Data = new byte[] { 0XAA, 0XAF, 0X01, 0X01, 0XFE, 0X59 };//
+            this.hid1.senddata(Data);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFD, 0X58, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+
+            dataanalysis1.TargetHeight = 90;
+
+            // byte[] Data = new byte[] { 0XAA, 0XAF, 0X01, 0X01, 0XFD, 0X58 };//
+            this.hid1.senddata(Data);
+        }
+
+        private void hid1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groundstation_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        //private void button9_Click(object sender, EventArgs e)
+        //{
+        //   // byte[] Data = {0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFF, 0X5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+        //    //string s = "acdefgh";
+        //    //System.IO.File.WriteAllText("C:\\Users\\Administrator\\Desktop\\1.xls", s, Encoding.Default );
+
+        //    //int[] Data = {1,2,3,5,7};
+        //    //for (int i=0;i< Data.Length;i++)
+        //    //System.IO.File.AppendAllText("C:\\Users\\Administrator\\Desktop\\1.txt", Data[i].ToString ());
+
+        //    //Excel.Application xlApp = new Excel.ApplicationClass();
+
+        //    //设置csv文件的完整路径 可以是绝对或相对路径    
+        //    string fileName = "C:\\Users\\Administrator\\Desktop\\1.csv";   //指定文件保存在 当前项目文件夹中的bin/debug/文件夹中
+        //    //创建输出流  参数1：数据源完整路径(你的csv文件)   参数2：文件中如果已经存在内容，新输入的内容会将原内容覆盖（设置为true的话则为追加）   参数3：编码格式
+        //    StreamWriter sw = new StreamWriter(fileName, false, Encoding.Default);
+        //    //向文件中输出一行记录  csv文件为逗号分隔符格式文件  同一行中单元格之间用逗号分开
+        //    sw.WriteLine("学号,姓名,年龄");
+        //    //第二行记录
+        //    sw.WriteLine("1,张三,20");
+        //    //第三行记录
+        //    sw.WriteLine("2,李四,25");
+
+        //    //。。。。。。要输出的记录
+        //    //输出完毕后关闭输出流  非常关键，不关闭的话程序进程将始终占用该csv文件，打开csv文件后看不到修改后的效果
+        //    sw.Close();
+        //}
+
+
+        public void writecsv(string  rol, string pit, string yaw, string height, string RCrol, string RCpit, string RCyaw, string RCthr, string TargetHeight)
+        {
+            sw.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8}", rol, pit, yaw, height, RCrol, RCpit, RCyaw, RCthr, TargetHeight);
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://robotics-tongji.org/");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                string qq = "2726089241";
+                System.Diagnostics.Process.Start("tencent://message/?uin=" + qq + "&Site=yyzq.net&Menu=yes");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("mailto:2726089241@qq.com");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0X01, 0X5C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0X02, 0X5D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0X04, 0X5F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0X05, 0X60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XA1, 0XFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XA0, 0XFB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(Data);
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {
+            button18.Enabled = false;
+            button17.Enabled = true;
+
+            dataanalysis1.writecsvEvent += writecsv;
+
+            dataanalysis1.writecsvflag = true;
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            button17.Enabled = false;
+            button18.Enabled = true;
+            dataanalysis1.writecsvflag = false;
+
+            dataanalysis1.writecsvEvent -= writecsv;
+            sw.Close();
+        }
+
+        private void tabPage4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void waveerror1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            int height;
+           // byte[] rolbyte = BitConverter.GetBytes(rol);
+
+            height = Convert.ToInt16(textBox1.Text.ToString());
+            if (height > 800)
+                height = 800;
+            if (height <300)
+                height = 300;
+
+            dataanalysis1.TargetHeight = height;
+
+            byte[] heightbyte = BitConverter.GetBytes(height);
+            byte[] heightbyteData = new byte[65];
+
+            heightbyteData[0] = 0X00; heightbyteData[1] = 0X09; heightbyteData[2] = 0XAA; heightbyteData[3] = 0XAF; heightbyteData[4] = 0X01; heightbyteData[5] = 0X04; heightbyteData[6] = 0XFC;
+            heightbyteData[7] = heightbyte[0]; heightbyteData[8] = heightbyte[1]; heightbyteData[9] = heightbyte[2]; heightbyteData[10] = heightbyte[3];
+
+            //byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFE, 0X59, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            //byte[] Data = { 0X00, 0X06, 0XAA, 0XAF, 0X01, 0X01, 0XFD, 0X58, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //new byte[64];
+            this.hid1.senddata(heightbyteData);
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            textBox1.Text = trackBar1.Value.ToString();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            //if(Convert.ToInt16(textBox1.Text.ToString())<800&& Convert.ToInt16(textBox1.Text.ToString()) >300)
+            //trackBar1.Value= Convert.ToInt16(textBox1.Text.ToString());
+        }
+
+        private void videocapture1_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
